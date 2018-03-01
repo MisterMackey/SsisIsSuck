@@ -90,12 +90,21 @@ namespace SSISISSUCK
                 bool CouldBeDouble = column.All(x => double.TryParse(x, out refdouble));
                 bool CouldBeBoolean = column.All(x => bool.TryParse(x, out refbool));
                 bool CouldBeChar = column.All(x => x.Count() == 1);
+
                 
                 if (CouldBeBoolean) { column.Push("System.Boolean"); }
                 else if (CouldBeInteger) { column.Push("System.Int32"); }
                 else if (CouldBeDouble) { column.Push("System.Double"); }
                 else if (CouldBeChar) { column.Push("System.Char"); }
-                else { column.Push("System.String"); }
+                else
+                {
+                    int length = 0;
+                    foreach (string s in column)
+                    {
+                        if (s.Length > length) { length = s.Length; }
+                    }
+                    column.Push("System.String; Length=" +length );
+                }
             });
         }
 
