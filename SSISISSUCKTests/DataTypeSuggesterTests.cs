@@ -16,7 +16,7 @@ namespace SSISISSUCK.Tests
         {
             DataTypeSuggester killssis = new DataTypeSuggester('\t');
 
-            string[] result = killssis.SuggestDataType(@"C:\Users\C51188\Documents\Axiom ultimo Jan 2018.txt", 100000, true).Result;
+            string[] result = killssis.SuggestDataType(@"C:\Users\C51188\Documents\Axiom ultimo Jan 2018.txt", 10000, true).Result;
 
             foreach (string s in result)
             {

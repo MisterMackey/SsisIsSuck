@@ -24,7 +24,7 @@ namespace SSISISSUCK
             this.delimiter = delimiter;
             this.ColumnCollection = new ConcurrentBag<ConcurrentStack<string>>();
         }
-        public async Task<string[]> SuggestDataType(string filePath, int rowsToRead, bool firstrowhasheaders)
+        public async Task<string[]> SuggestDataType(string filePath, int rowsToRead, bool firstrowhasheaders, double stringpadding = 0)
         {
             Init(filePath);
             StreamReader reader = new StreamReader(filePath);
@@ -54,7 +54,7 @@ namespace SSISISSUCK
 
             await ColumnAssigner.Completion;
 
-            DoSuggestType();
+            DoSuggestType(stringpadding);
             List<string> types = new List<string>();
             foreach (ConcurrentStack<string> type in ColumnCollection)
             {
@@ -77,7 +77,7 @@ namespace SSISISSUCK
             }
         }
 
-        private void DoSuggestType()
+        private void DoSuggestType(double stringpadding)
         {
             Parallel.ForEach<ConcurrentStack<string>>(ColumnCollection, column =>
             {
@@ -92,10 +92,10 @@ namespace SSISISSUCK
                 bool CouldBeChar = column.All(x => x.Count() == 1);
 
                 
-                if (CouldBeBoolean) { column.Push("System.Boolean"); }
-                else if (CouldBeInteger) { column.Push("System.Int32"); }
-                else if (CouldBeDouble) { column.Push("System.Double"); }
-                else if (CouldBeChar) { column.Push("System.Char"); }
+                if (CouldBeBoolean) { column.Push("BIT"); }
+                else if (CouldBeInteger) { column.Push("INT"); }
+                else if (CouldBeDouble) { column.Push("FLOAT"); }
+                else if (CouldBeChar) { column.Push("CHAR"); }
                 else
                 {
                     int length = 0;
@@ -103,7 +103,9 @@ namespace SSISISSUCK
                     {
                         if (s.Length > length) { length = s.Length; }
                     }
-                    column.Push("System.String; Length=" +length );
+                    length = (int)(length * (stringpadding / 100));//add padding and round to int
+                    if (length == 0) { length = 500; } //incase of empty column just give 500
+                    column.Push("VARCHAR(" + length +")"); 
                 }
             });
         }
