@@ -29,6 +29,7 @@ namespace SSISISSUCK
         {
             this.context = context;
             this.RowsCollection = RowsCollection;
+            done = false;
         }
         public void Queu(Object rowitem)
         {
@@ -97,12 +98,12 @@ namespace SSISISSUCK
                 }
             }
 
-            while (!done)
+            while (!(done && RowsCollection.IsEmpty))
             {
 
                 int batchsize = 10000;
                 int count = 0;
-                while (count < batchsize)
+                while (!(done && RowsCollection.IsEmpty) && count < batchsize)
                 {
                     List<string> row;
                     if (RowsCollection.TryDequeue(out row))
@@ -119,7 +120,7 @@ namespace SSISISSUCK
                 using (SqlBulkCopy Bulk = new SqlBulkCopy(context.ConnectionString, SqlBulkCopyOptions.TableLock))
                 {
                     Bulk.DestinationTableName = TableName;
-
+                    Bulk.BatchSize = batchsize;
                     try
                     {
                         Bulk.WriteToServer(dataTable);
@@ -135,22 +136,8 @@ namespace SSISISSUCK
                 dataTable.Clear();
 
             }
-            using (SqlBulkCopy Bulk = new SqlBulkCopy(context.ConnectionString, SqlBulkCopyOptions.TableLock))
-            {
-                Bulk.DestinationTableName = TableName;
 
-                try
-                {
-                    Bulk.WriteToServer(dataTable);
-                }
-                catch (Exception e)
-                {
-                    e.Data["DataTableColumns"] = dataTable.Columns.ToString();
-
-                    throw new AggregateException("something went wrong trying to insert data, see innerexception", e);
-                }
-            }
-                OnFinishedWriting();
+            OnFinishedWriting();
         }
     }
 }
