@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Collections.Concurrent;
 using System.Data.SqlClient;
 using System.Data;
@@ -14,12 +14,21 @@ namespace SSISISSUCK
 
         //public ConcurrentQueue<List<string>> Rows {get;set;}
         public bool done { get; set; }
-        private PipeLineContext context;
-
-        public Inserter(PipeLineContext context)
+        private readonly PipeLineContext context;
+        private ConcurrentQueue<List<string>> RowsCollection;
+        public event Action FinishedWriting;
+        public void StopWriting()
+        {
+            done = true;
+        }
+        private void OnFinishedWriting()
+        {
+            FinishedWriting?.Invoke();
+        }
+        public Inserter(PipeLineContext context, ConcurrentQueue<List<string>> RowsCollection)
         {
             this.context = context;
-
+            this.RowsCollection = RowsCollection;
         }
         public void Queu(Object rowitem)
         {
@@ -64,11 +73,18 @@ namespace SSISISSUCK
 
             
         }
-        public void BigQueu(Object RowsCollection)
+        /// <summary>
+        /// creates a concurrent writer using the context of the parent object, dont make too many or your server will throw a hissyfit
+        /// </summary>
+        public void CreateConcurrentWriter()
         {
-            ConcurrentQueue<List<string>> Rows = (ConcurrentQueue<List<string>>)RowsCollection;
+            ThreadPool.QueueUserWorkItem(BigQueu);
+        }
+        private void BigQueu(object state)
+        {
             StringBuilder sb = new StringBuilder();
             DataTable dataTable = new DataTable();
+            string TableName = context.DestinationTableName;
             foreach (string s in context.ColumnNames)
             {
                 try
@@ -80,6 +96,7 @@ namespace SSISISSUCK
                     dataTable.Columns.Add("if you are reading this, ur app done goofed");
                 }
             }
+
             while (!done)
             {
 
@@ -88,7 +105,7 @@ namespace SSISISSUCK
                 while (!done && count < batchsize)
                 {
                     List<string> row;
-                    if (Rows.TryDequeue(out row))
+                    if (RowsCollection.TryDequeue(out row))
                     {
                         DataRow newRow = dataTable.NewRow();
                         for (int i = 0; i < row.Count; i++)
@@ -102,14 +119,25 @@ namespace SSISISSUCK
                 }
                 using (SqlBulkCopy Bulk = new SqlBulkCopy(context.ConnectionString, SqlBulkCopyOptions.TableLock))
                 {
-                    Bulk.DestinationTableName = "dbo.[AxiomData]";
-                    Bulk.BatchSize = 50000;
-                    Bulk.WriteToServer(dataTable);
+                    Bulk.DestinationTableName = TableName;
+                    Bulk.BatchSize = batchsize;
+
+                    try
+                    {
+                        Bulk.WriteToServer(dataTable);
+                    }
+                    catch (Exception e)
+                    {
+                        e.Data["DataTableColumns"] = dataTable.Columns.ToString();
+                        
+                        throw new AggregateException("something went wrong trying to insert data, see innerexception", e);
+                    }
 
                 }
                 dataTable.Clear();
 
             }
+            OnFinishedWriting();
         }
     }
 }

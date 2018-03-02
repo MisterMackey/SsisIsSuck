@@ -35,6 +35,7 @@ namespace SSISISSUCK
         public bool FirstRowContainsHeaders { get; set; }
         public bool IsSuggestingDataTypes { get; set; }
         public double StringPadding { get; set; }
+        public int ReaderBufferSize { get; set; }
 
         public PipeLineContext() //default values
         {
@@ -42,10 +43,11 @@ namespace SSISISSUCK
             FieldDelimiter = ',';
             PathToSourceFile = string.Empty;
             DestinationTableName = "SSISSUCK";
-            LinesToScan = 5000;
+            LinesToScan = 10000;
             FirstRowContainsHeaders = true;
             IsSuggestingDataTypes = true;
-            StringPadding = 50;
+            StringPadding = 100;
+            ReaderBufferSize = 50000;
         }
 
         private string[] GetDataTypes()
@@ -60,7 +62,7 @@ namespace SSISISSUCK
                 string[] dataTypes = new string[ColumnNames.Length];
                 for (int i = 0; i < dataTypes.Length; i++)
                 {
-                    dataTypes[i++] = "VARCHAR(500)";
+                    dataTypes[i] = "VARCHAR(500)";
                 }
                 return dataTypes;
             }

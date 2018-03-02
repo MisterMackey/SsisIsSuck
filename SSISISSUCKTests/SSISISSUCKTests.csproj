@@ -58,6 +58,7 @@
   <ItemGroup>
     <Compile Include="DataTypeSuggesterTests.cs" />
     <Compile Include="DestinationTableCreatorTests.cs" />
+    <Compile Include="InserterTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -49,6 +49,7 @@
     <Compile Include="Inserter.cs" />
     <Compile Include="PipeLineContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SourceFileReader.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
