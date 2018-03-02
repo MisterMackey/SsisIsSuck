@@ -18,10 +18,12 @@ namespace SSISISSUCK.Tests
         public void InserterTest()
         {
             PipeLineContext c = new PipeLineContext();
-            c.PathToSourceFile = @"C:\Users\C51188\Documents\Axiom ultimo Jan 2018.txt";
+            c.PathToSourceFile = @"C:\Users\C51188\Documents\TestData.txt";
             c.ConnectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Liquidity;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
             c.FieldDelimiter = '\t';
-            c.IsSuggestingDataTypes = false;
+            c.DestinationTableName = "Players";
+            c.IsSuggestingDataTypes = true;
+            c.LinesToScan = 1000;
             ConcurrentQueue<List<string>> RowsCollection = new ConcurrentQueue<List<string>>();
             SourceFileReader Reader = new SourceFileReader(c, RowsCollection);
             Inserter Writer = new Inserter(c, RowsCollection);

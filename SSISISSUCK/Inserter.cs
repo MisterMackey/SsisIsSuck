@@ -102,7 +102,7 @@ namespace SSISISSUCK
 
                 int batchsize = 10000;
                 int count = 0;
-                while (!done && count < batchsize)
+                while (count < batchsize)
                 {
                     List<string> row;
                     if (RowsCollection.TryDequeue(out row))
@@ -115,12 +115,10 @@ namespace SSISISSUCK
                         dataTable.Rows.Add(newRow);
                         count++;
                     }
-
                 }
                 using (SqlBulkCopy Bulk = new SqlBulkCopy(context.ConnectionString, SqlBulkCopyOptions.TableLock))
                 {
                     Bulk.DestinationTableName = TableName;
-                    Bulk.BatchSize = batchsize;
 
                     try
                     {
@@ -137,7 +135,22 @@ namespace SSISISSUCK
                 dataTable.Clear();
 
             }
-            OnFinishedWriting();
+            using (SqlBulkCopy Bulk = new SqlBulkCopy(context.ConnectionString, SqlBulkCopyOptions.TableLock))
+            {
+                Bulk.DestinationTableName = TableName;
+
+                try
+                {
+                    Bulk.WriteToServer(dataTable);
+                }
+                catch (Exception e)
+                {
+                    e.Data["DataTableColumns"] = dataTable.Columns.ToString();
+
+                    throw new AggregateException("something went wrong trying to insert data, see innerexception", e);
+                }
+            }
+                OnFinishedWriting();
         }
     }
 }
