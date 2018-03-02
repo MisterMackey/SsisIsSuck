@@ -16,11 +16,12 @@ namespace SSISISSUCK.Tests
         [TestMethod()]
         public void CreateTableTest()
         {
-            DestinationTableCreator creator = new DestinationTableCreator(
-                @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Liquidity;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False",
-                "YO MAMA",
-                @"C:\Users\C51188\Documents\Axiom ultimo Jan 2018.txt");
-            creator.CreateTable(true, '\t', 50, true);
+            PipeLineContext c = new PipeLineContext();
+            c.PathToSourceFile = @"C:\Users\C51188\Documents\Axiom ultimo Jan 2018.txt";
+            c.ConnectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Liquidity;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+            c.FieldDelimiter = '\t';
+            DestinationTableCreator creator = new DestinationTableCreator(c);
+            creator.CreateTable();
 
         }
     }

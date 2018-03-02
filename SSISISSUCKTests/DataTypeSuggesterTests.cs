@@ -14,9 +14,12 @@ namespace SSISISSUCK.Tests
         [TestMethod()]
         public void SuggestDataTypeTest()
         {
-            DataTypeSuggester killssis = new DataTypeSuggester('\t');
+            PipeLineContext c = new PipeLineContext();
+            c.PathToSourceFile = @"C:\Users\C51188\Documents\Axiom ultimo Jan 2018.txt";
+            c.FieldDelimiter = '\t';
+            DataTypeSuggester killssis = new DataTypeSuggester(c);
 
-            string[] result = killssis.SuggestDataType(@"C:\Users\C51188\Documents\Axiom ultimo Jan 2018.txt", 10000, true).Result;
+            string[] result = killssis.SuggestDataType().Result;
 
             foreach (string s in result)
             {

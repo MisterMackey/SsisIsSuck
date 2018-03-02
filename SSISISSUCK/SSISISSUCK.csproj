@@ -46,6 +46,8 @@
   <ItemGroup>
     <Compile Include="DataTypeSuggester.cs" />
     <Compile Include="DestinationTableCreator.cs" />
+    <Compile Include="Inserter.cs" />
+    <Compile Include="PipeLineContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

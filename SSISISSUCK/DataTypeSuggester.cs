@@ -17,21 +17,21 @@ namespace SSISISSUCK
     {
         TransformBlock<string, string[]> StringSplit;
         ActionBlock<string[]> ColumnAssigner;
-        private char delimiter;
+        private PipeLineContext Context;
         private ConcurrentBag<ConcurrentStack<string>> ColumnCollection;
-        public DataTypeSuggester(char delimiter)
+        public DataTypeSuggester(PipeLineContext c)
         {
-            this.delimiter = delimiter;
+            Context = c;
             this.ColumnCollection = new ConcurrentBag<ConcurrentStack<string>>();
         }
-        public async Task<string[]> SuggestDataType(string filePath, int rowsToRead, bool firstrowhasheaders, double stringpadding = 0)
+        public async Task<string[]> SuggestDataType()
         {
-            Init(filePath);
-            StreamReader reader = new StreamReader(filePath);
-            if (firstrowhasheaders) { reader.ReadLine(); } //toss the first line
+            Init(Context.PathToSourceFile);
+            StreamReader reader = new StreamReader(Context.PathToSourceFile);
+            if (Context.FirstRowContainsHeaders) { reader.ReadLine(); } //toss the first line
             StringSplit = new TransformBlock<string, string[]>(row =>
            {
-               return row.Split(delimiter);
+               return row.Split(Context.FieldDelimiter);
            });
 
             ColumnAssigner = new ActionBlock<string[]>(row =>
@@ -45,7 +45,7 @@ namespace SSISISSUCK
             StringSplit.LinkTo(ColumnAssigner, new DataflowLinkOptions { PropagateCompletion = true });
             
 
-            Parallel.For(0, rowsToRead, new ParallelOptions {MaxDegreeOfParallelism =  1}, x =>
+            Parallel.For(0, Context.LinesToScan, new ParallelOptions {MaxDegreeOfParallelism =  1}, x =>
              {
                  x++;
                  StringSplit.Post(reader.ReadLine());
@@ -54,7 +54,7 @@ namespace SSISISSUCK
 
             await ColumnAssigner.Completion;
 
-            DoSuggestType(stringpadding);
+            DoSuggestType(Context.StringPadding);
             List<string> types = new List<string>();
             foreach (ConcurrentStack<string> type in ColumnCollection)
             {
@@ -70,7 +70,7 @@ namespace SSISISSUCK
         private void Init(string file)
         {
             StreamReader reader = new StreamReader(file);
-            int columncount = reader.ReadLine().Split(delimiter).Count();
+            int columncount = reader.ReadLine().Split(Context.FieldDelimiter).Count();
             for (int i = 0; i < columncount; i++)
             {
                 ColumnCollection.Add(new ConcurrentStack<string>());
