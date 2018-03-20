@@ -43,12 +43,15 @@ namespace SSISISSUCK
            });
 
             StringSplit.LinkTo(ColumnAssigner, new DataflowLinkOptions { PropagateCompletion = true });
-            
 
+            string s;
             Parallel.For(0, Context.LinesToScan, new ParallelOptions {MaxDegreeOfParallelism =  1}, x =>
              {
                  x++;
-                 StringSplit.Post(reader.ReadLine());
+                 if ((s = reader.ReadLine()) != null)
+                 {
+                     StringSplit.Post(s);
+                 }
              });
             StringSplit.Complete();
 

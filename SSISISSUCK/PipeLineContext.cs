@@ -42,7 +42,7 @@ namespace SSISISSUCK
             ConnectionString = @"Server=.\SQLEXPRESS; Database=master; Integrated Security=True;";
             FieldDelimiter = ',';
             PathToSourceFile = string.Empty;
-            DestinationTableName = "SSISSUCK";
+            DestinationTableName = "LeTable";
             LinesToScan = 10000;
             FirstRowContainsHeaders = true;
             IsSuggestingDataTypes = true;
