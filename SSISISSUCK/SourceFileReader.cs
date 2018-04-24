@@ -11,8 +11,8 @@ namespace SSISISSUCK
 {
     public class SourceFileReader
     {
-        private ConcurrentQueue<List<string>> RowsCollection;
-        private PipeLineContext Context;
+        private readonly ConcurrentQueue<List<string>> RowsCollection;
+        private readonly PipeLineContext Context;
         public event Action ReadFinished;
 
         public SourceFileReader(PipeLineContext c, ConcurrentQueue<List<string>> rows)

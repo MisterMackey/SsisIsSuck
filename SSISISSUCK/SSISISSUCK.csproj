@@ -20,6 +20,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <RegisterForComInterop>false</RegisterForComInterop>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -44,8 +46,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="COMLoader.cs" />
     <Compile Include="DataTypeSuggester.cs" />
     <Compile Include="DestinationTableCreator.cs" />
+    <Compile Include="ICOMLoader.cs" />
     <Compile Include="Inserter.cs" />
     <Compile Include="PipeLineContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

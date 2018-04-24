@@ -34,7 +34,6 @@ namespace FileLoaderClient
             if (DatabaseList.Count == 0)
             {
                 sb.ConnectTimeout = 10;
-                //sb.Authentication = SqlAuthenticationMethod.ActiveDirectoryIntegrated;
                 sb.DataSource = txtServerName.Text;
                 sb.IntegratedSecurity = true;
                 using (SqlConnection con = new SqlConnection(sb.ConnectionString))

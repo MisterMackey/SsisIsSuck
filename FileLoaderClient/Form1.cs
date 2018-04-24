@@ -124,7 +124,13 @@ namespace FileLoaderClient
                     OnLoad(null);
                 }
             }
-    #endregion
+
+            else if (SelectedNode.Name.Equals("IsAppendingDataToExistingTable"))
+            {
+                Context.IsAppendingDataToExistingTable ^= true;
+                OnLoad(null);
+            }
+            #endregion
         }
 
         private void OnStartButtonClicked(object sender, EventArgs e)
@@ -134,11 +140,16 @@ namespace FileLoaderClient
             StartFileTransfer();
             //celebrate
         }
+#pragma warning disable S3241 // Methods should not return values that are never used
         private async Task StartFileTransfer()
+#pragma warning restore S3241 // Methods should not return values that are never used
         {
             //build staging table
-            DestinationTableCreator TableMaker = new DestinationTableCreator(Context);
-            TableMaker.CreateTable();
+            if (!Context.IsAppendingDataToExistingTable)
+            {
+                DestinationTableCreator TableMaker = new DestinationTableCreator(Context);
+                TableMaker.CreateTable(); 
+            }
 
             //create buffer
             ConcurrentQueue<List<string>> Queu = new ConcurrentQueue<List<string>>();

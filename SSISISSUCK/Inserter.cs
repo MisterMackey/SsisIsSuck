@@ -12,10 +12,10 @@ namespace SSISISSUCK
     public class Inserter
     {
 
-        //public ConcurrentQueue<List<string>> Rows {get;set;}
+
         public bool done { get; set; }
         private readonly PipeLineContext context;
-        private ConcurrentQueue<List<string>> RowsCollection;
+        private readonly ConcurrentQueue<List<string>>  RowsCollection;
         public event Action FinishedWriting;
         public void StopWriting()
         {
@@ -39,9 +39,10 @@ namespace SSISISSUCK
 
                 sb.AppendLine("insert into dbo.[AxiomData] VALUES ");
             int BatchSize = 1000;
+            List<string> row;
             while (!done && current < BatchSize)
             {
-                List<string> row = new List<string>();
+                
                 if (Rows.TryDequeue(out row))
                 {
                     sb.Append("(");
@@ -69,8 +70,7 @@ namespace SSISISSUCK
                 com.ExecuteNonQuery();
                 con.Close();
             }
-                sb.Clear();
-                current = 0;
+            sb.Clear();
 
             
         }
@@ -83,10 +83,9 @@ namespace SSISISSUCK
         }
         private void BigQueu(object state)
         {
-            StringBuilder sb = new StringBuilder();
             DataTable dataTable = new DataTable();
             string TableName = context.DestinationTableName;
-            foreach (string s in context.ColumnNames)
+            foreach (string s in context.ColumnNames) //if column names are not matching in target table, exception will be thrown when trying to write
             {
                 try
                 {

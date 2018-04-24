@@ -36,6 +36,7 @@ namespace SSISISSUCK
         public bool IsSuggestingDataTypes { get; set; }
         public double StringPadding { get; set; }
         public int ReaderBufferSize { get; set; }
+        public bool IsAppendingDataToExistingTable { get; set; }
 
         public PipeLineContext() //default values
         {
