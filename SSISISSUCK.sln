@@ -9,6 +9,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSISISSUCKTests", "SSISISSU
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileLoaderClient", "FileLoaderClient\FileLoaderClient.csproj", "{DD92DB2B-41C8-40F0-AC93-B2E263B09120}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SonarQube", "SonarQube", "{1EDD8800-A11E-4DB5-A6C0-95F15A468D5B}"
+	ProjectSection(SolutionItems) = preProject
+		SonarQube\0f7761eb-ac47-48ce-8407-57f9e2693630CSharp.ruleset = SonarQube\0f7761eb-ac47-48ce-8407-57f9e2693630CSharp.ruleset
+		SonarQube\SolutionBinding.sqconfig = SonarQube\SolutionBinding.sqconfig
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

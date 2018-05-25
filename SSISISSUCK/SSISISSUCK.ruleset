@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RuleSet Name="SonarQube - 0f7761eb-ac47-48ce-8407-57f9e2693630 Sonar way" ToolsVersion="15.0">
+  <Include Path="..\sonarqube\0f7761eb-ac47-48ce-8407-57f9e2693630csharp.ruleset" Action="Default" />
+</RuleSet>
